@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-11-17T01:23:12.192Z",
+  "driver": "sqlite",
+  "isolation": "db-per-tenant",
+  "totalRuns": 1000,
+  "nodesPerRun": 4,
+  "totalStepsExecuted": 4000,
+  "workerConcurrency": 50,
+  "enqueueTimeMs": 522,
+  "totalWallTimeMs": 8591,
+  "throughputRunsPerSec": 116.4,
+  "stepThroughputPerSec": 465.6,
+  "succeeded": 1000,
+  "failed": 0,
+  "successRatePct": 100,
+  "latencyMs": {
+    "min": 184,
+    "avg": 407,
+    "p50": 368,
+    "p95": 685,
+    "p99": 955,
+    "max": 993
+  },
+  "tenantDbSizeKb": 10884,
+  "memoryRssMb": 600.8
+}

@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sagaflow-api
+  namespace: sagaflow
+  labels:
+    app: sagaflow-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sagaflow-api
+  template:
+    metadata:
+      labels:
+        app: sagaflow-api
+    spec:
+      containers:
+        - name: api
+          image: sagaflow:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4000
+          env:
+            - name: ROLE
+              value: "api"
+          envFrom:
+            - configMapRef:
+                name: sagaflow-config
+            - secretRef:
+                name: sagaflow-secrets
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sagaflow-api
+  namespace: sagaflow
+spec:
+  selector:
+    app: sagaflow-api
+  ports:
+    - port: 80
+      targetPort: 4000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sagaflow-ingress
+  namespace: sagaflow
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+spec:
+  rules:
+    - host: sagaflow.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sagaflow-api
+                port:
+                  number: 80

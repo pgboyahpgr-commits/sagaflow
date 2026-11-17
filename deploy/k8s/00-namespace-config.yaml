@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sagaflow
+  labels:
+    app.kubernetes.io/part-of: sagaflow
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sagaflow-config
+  namespace: sagaflow
+data:
+  HOST: "0.0.0.0"
+  PORT: "4000"
+  AUTH_MODE: "prod"
+  STORAGE_DRIVER: "postgres"
+  STORAGE_ISOLATION: "rls"
+  QUEUE_DRIVER: "nats"
+  NATS_URL: "nats://sagaflow-nats:4222"
+  WORKER_CONCURRENCY: "32"
+  CRON_POLL_INTERVAL_MS: "15000"
+  SANDBOX_MEMORY_LIMIT_MB: "16"
+  SANDBOX_TIMEOUT_MS: "2000"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sagaflow-secrets
+  namespace: sagaflow
+type: Opaque
+stringData:
+  # Replace these values before deploying to production clusters
+  DATABASE_URL: "postgres://sagaflow:sagaflow-change-me@sagaflow-postgres:5432/sagaflow"
+  SAGAFLOW_MASTER_KEY: "replace-with-32-byte-random-aes256-master-key"
+  SAGAFLOW_JWT_SECRET: "replace-with-32-byte-random-hs256-jwt-secret"

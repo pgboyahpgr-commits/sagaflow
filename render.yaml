@@ -1,0 +1,34 @@
+# Render one-click cloud deployment blueprint
+services:
+  - type: web
+    name: sagaflow
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: HOST
+        value: "0.0.0.0"
+      - key: PORT
+        value: "4000"
+      - key: ROLE
+        value: "all"
+      - key: STORAGE_DRIVER
+        value: "sqlite"
+      - key: STORAGE_ISOLATION
+        value: "db-per-tenant"
+      - key: STORAGE_PATH
+        value: "/app/data"
+      - key: QUEUE_DRIVER
+        value: "local"
+      - key: AUTH_MODE
+        value: "prod"
+      - key: SEED_DEMO
+        value: "false"
+      - key: SAGAFLOW_MASTER_KEY
+        generateValue: true
+      - key: SAGAFLOW_JWT_SECRET
+        generateValue: true
+    disk:
+      name: sagaflow-data
+      mountPath: /app/data
+      sizeGB: 1

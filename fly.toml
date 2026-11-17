@@ -1,0 +1,37 @@
+# Fly.io one-command cloud deployment: `fly launch --no-deploy && fly volumes create sagaflow_data --size 1 && fly deploy`
+app = "sagaflow"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  HOST = "0.0.0.0"
+  PORT = "4000"
+  ROLE = "all"
+  STORAGE_DRIVER = "sqlite"
+  STORAGE_ISOLATION = "db-per-tenant"
+  STORAGE_PATH = "/app/data"
+  QUEUE_DRIVER = "local"
+  # Public internet deployment: require real credentials. Set SEED_DEMO=true if
+  # you explicitly want the sample tenants/workflows on a fresh volume.
+  AUTH_MODE = "prod"
+  SEED_DEMO = "false"
+
+[mounts]
+  source = "sagaflow_data"
+  destination = "/app/data"
+
+[http_service]
+  internal_port = 4000
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    interval = "20s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/api/health"

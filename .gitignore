@@ -1,0 +1,32 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+build
+.vite
+coverage
+
+# Local runtime data (SQLite databases, JSON stores, encryption keys)
+data/
+!data/.gitkeep
+*.db
+*.db-wal
+*.db-shm
+.master.key
+
+# Secrets / environment
+.env
+.env.*
+!.env.example
+
+# Tooling
+.vercel
+.turbo
+*.tsbuildinfo
+*.log
+.DS_Store
+Thumbs.db
+
+.vercel
+.env*

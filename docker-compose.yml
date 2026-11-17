@@ -1,0 +1,109 @@
+services:
+  # Default zero-config self-hosted mode ($0 budget, embedded db-per-tenant SQLite)
+  sagaflow:
+    build: .
+    container_name: sagaflow
+    ports:
+      - "4000:4000"
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "4000"
+      AUTH_MODE: "${AUTH_MODE:-dev}"
+      STORAGE_DRIVER: "${STORAGE_DRIVER:-sqlite}"
+      STORAGE_ISOLATION: "${STORAGE_ISOLATION:-db-per-tenant}"
+      STORAGE_PATH: "/app/data"
+      QUEUE_DRIVER: "${QUEUE_DRIVER:-local}"
+      WORKER_CONCURRENCY: "${WORKER_CONCURRENCY:-16}"
+      SEED_DEMO: "${SEED_DEMO:-true}"
+    volumes:
+      - sagaflow_data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4000/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    stop_grace_period: 20s
+    restart: unless-stopped
+
+  # Enterprise Scale Profile: `docker compose --profile scale up`
+  # Enables PostgreSQL 17 (Row-Level Security) + NATS JetStream distributed queues
+  postgres:
+    image: postgres:17-alpine
+    profiles: ["scale"]
+    environment:
+      POSTGRES_USER: sagaflow
+      POSTGRES_PASSWORD: sagaflow_change_me
+      POSTGRES_DB: sagaflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sagaflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  nats:
+    image: nats:2.10-alpine
+    profiles: ["scale"]
+    command: ["-js", "-sd", "/data", "-m", "8222"]
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - nats_data:/data
+
+  sagaflow-api:
+    build: .
+    profiles: ["scale"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    ports:
+      - "4001:4000"
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "4000"
+      ROLE: "api"
+      AUTH_MODE: "${AUTH_MODE:-dev}"
+      STORAGE_DRIVER: "postgres"
+      STORAGE_ISOLATION: "rls"
+      DATABASE_URL: "postgres://sagaflow:sagaflow_change_me@postgres:5432/sagaflow"
+      QUEUE_DRIVER: "nats"
+      NATS_URL: "nats://nats:4222"
+      SAGAFLOW_MASTER_KEY: "${SAGAFLOW_MASTER_KEY:-sagaflow-compose-scale-master-key-2026}"
+      SAGAFLOW_JWT_SECRET: "${SAGAFLOW_JWT_SECRET:-sagaflow-compose-scale-jwt-secret-2026}"
+    restart: unless-stopped
+
+  sagaflow-worker:
+    build: .
+    profiles: ["scale"]
+    deploy:
+      replicas: 2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "4000"
+      ROLE: "worker"
+      STORAGE_DRIVER: "postgres"
+      STORAGE_ISOLATION: "rls"
+      DATABASE_URL: "postgres://sagaflow:sagaflow_change_me@postgres:5432/sagaflow"
+      QUEUE_DRIVER: "nats"
+      NATS_URL: "nats://nats:4222"
+      WORKER_CONCURRENCY: "32"
+      SAGAFLOW_MASTER_KEY: "${SAGAFLOW_MASTER_KEY:-sagaflow-compose-scale-master-key-2026}"
+      SAGAFLOW_JWT_SECRET: "${SAGAFLOW_JWT_SECRET:-sagaflow-compose-scale-jwt-secret-2026}"
+    restart: unless-stopped
+
+volumes:
+  sagaflow_data:
+  pg_data:
+  nats_data:

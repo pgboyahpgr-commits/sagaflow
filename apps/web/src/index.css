@@ -1,0 +1,286 @@
+@import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
+
+/* ============================================================================
+   SagaFlow — "Carbon Precision" Design System (DESIGN.md Canonical Tokens)
+   ============================================================================ */
+:root {
+  color-scheme: dark;
+
+  /* Core Architecture Elevation Tiers */
+  --sf-void: #0c0e10;            /* Tier 0: Root canvas & terminal feeds */
+  --sf-rail: #111417;            /* Command rails, inputs, table headers */
+  --sf-surface: #15191d;         /* Tier 1: Primary cards, inspectors, toolbars */
+  --sf-elevated: #181d22;        /* Tier 2: Popovers, Command Palette, Modals */
+  --sf-hover: #1c2227;           /* Row & interactive surface hover */
+  --sf-border: #262c32;          /* Crisp 1px structural outlines */
+  --sf-border-highlight: #2f373f;/* Highlight & modal borders */
+
+  /* Telemetry & Semantic Tokens */
+  --sf-primary: #22e55c;         /* Primary CTA, healthy, active */
+  --sf-primary-bright: #39ff14;  /* Primary CTA hover, active aura */
+  --sf-primary-fixed: #73ff86;   /* High-luminescence neon readout */
+  --sf-on-primary: #070b07;      /* Mandatory high-contrast dark text on neon */
+  --sf-secondary: #a855f7;       /* Compensation / Saga rollback */
+  --sf-tertiary: #f59e0b;        /* HITL Approval / Pending / Warning */
+  --sf-destructive: #f43f5e;     /* DLQ / Permanent failure / Abort */
+  --sf-fg: #f1f5f9;              /* High-contrast foreground */
+  --sf-muted: #808d99;           /* Muted metadata & timestamps */
+
+  /* Typography */
+  --sf-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --sf-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--sf-font-sans);
+  margin: 0;
+  background-color: var(--sf-void);
+  color: var(--sf-fg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+code,
+pre,
+kbd,
+.font-mono {
+  font-family: var(--sf-font-mono);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Precision compact scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0c0e10;
+}
+::-webkit-scrollbar-thumb {
+  background: #262c32;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #36404a;
+}
+
+/* Tier 0: Carbon Void Workspace Surface */
+.sf-surface-bg {
+  background-color: #0c0e10;
+}
+
+/* Tier 1: Zero-Shadow Default Surface Container (4px base radius) */
+.sf-card {
+  background: #15191d;
+  border: 1px solid #262c32;
+  border-radius: 4px;
+}
+
+/* Tier 1 Active Neon Container */
+.sf-card-neon {
+  background: #15191d;
+  border: 1px solid rgba(34, 229, 92, 0.35);
+  border-top: 2px solid #22e55c;
+  border-radius: 4px;
+  box-shadow: 0 0 16px rgba(34, 229, 92, 0.14);
+}
+
+/* Tier 2: Popovers, Command Palette & Modals (8px radius + directional shadow) */
+.sf-modal {
+  background: #181d22;
+  border: 1px solid #2f373f;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+}
+
+/* Signature 2px Top Micro-Bars */
+.sf-top-neon {
+  border-top: 2px solid #22e55c !important;
+}
+.sf-top-amber {
+  border-top: 2px solid #f59e0b !important;
+}
+.sf-top-violet {
+  border-top: 2px solid #a855f7 !important;
+}
+.sf-top-rose {
+  border-top: 2px solid #f43f5e !important;
+}
+
+/* DESIGN.md Button Variants (4px base radius, NEVER pill-shaped) */
+.sf-btn-neon,
+.sf-btn-primary {
+  background-color: #22e55c;
+  color: #070b07;
+  font-weight: 600;
+  border: 1px solid #22e55c;
+  border-radius: 4px;
+  transition: background-color 120ms ease, box-shadow 140ms ease, transform 100ms ease;
+}
+
+.sf-btn-neon:hover:not(:disabled),
+.sf-btn-primary:hover:not(:disabled) {
+  background-color: #39ff14;
+  border-color: #39ff14;
+  box-shadow: 0 0 16px rgba(34, 229, 92, 0.32);
+}
+
+.sf-btn-neon:active:not(:disabled),
+.sf-btn-primary:active:not(:disabled) {
+  transform: translateY(0.5px);
+}
+
+.sf-btn-secondary {
+  background-color: #15191d;
+  color: #f1f5f9;
+  border: 1px solid #262c32;
+  border-radius: 4px;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.sf-btn-secondary:hover:not(:disabled) {
+  background-color: #1c2227;
+  border-color: #2f373f;
+}
+
+.sf-btn-compensate {
+  background-color: transparent;
+  color: #a855f7;
+  border: 1px solid #a855f7;
+  border-radius: 4px;
+  transition: background-color 120ms ease;
+}
+
+.sf-btn-compensate:hover:not(:disabled) {
+  background-color: rgba(168, 85, 247, 0.12);
+}
+
+.sf-btn-danger {
+  background-color: transparent;
+  color: #f43f5e;
+  border: 1px solid #f43f5e;
+  border-radius: 4px;
+  transition: background-color 120ms ease;
+}
+
+.sf-btn-danger:hover:not(:disabled) {
+  background-color: rgba(244, 63, 94, 0.12);
+}
+
+/* DESIGN.md Input Fields & Query Consoles */
+.sf-input {
+  background-color: #111417;
+  border: 1px solid #262c32;
+  border-radius: 4px;
+  color: #f1f5f9;
+  font-family: var(--sf-font-mono);
+  font-size: 12px;
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.sf-input::placeholder {
+  color: #64717d;
+}
+
+.sf-input:focus {
+  border-color: #22e55c;
+  box-shadow: 0 0 0 1px #22e55c;
+}
+
+/* DESIGN.md Compact Checkboxes (14x14, 2px radius) */
+input[type="checkbox"] {
+  accent-color: #22e55c;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+/* Typography Helpers matching DESIGN.md scale */
+.sf-label-md {
+  font-family: var(--sf-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sf-label-sm {
+  font-family: var(--sf-font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sf-neon-text {
+  color: #22e55c;
+}
+
+/* React Flow Precision Dot-Grid Canvas */
+.react-flow__background {
+  background-color: #0c0e10;
+}
+
+.react-flow__controls {
+  background: #15191d !important;
+  border: 1px solid #262c32 !important;
+  border-radius: 4px !important;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+
+.react-flow__controls-button {
+  background: transparent !important;
+  border-bottom: 1px solid #262c32 !important;
+  color: #808d99 !important;
+  fill: #808d99 !important;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.react-flow__controls-button:hover {
+  background: #1c2227 !important;
+  color: #22e55c !important;
+  fill: #22e55c !important;
+}
+
+.react-flow__minimap {
+  background-color: #111417 !important;
+  border: 1px solid #262c32 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+  transition: stroke 140ms ease, stroke-width 140ms ease;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #39ff14 !important;
+  stroke-width: 3;
+}
+
+.react-flow__handle {
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.react-flow__handle:hover {
+  transform: scale(1.25);
+  box-shadow: 0 0 12px rgba(34, 229, 92, 0.85);
+}
+
+.react-flow__attribution {
+  display: none !important;
+}

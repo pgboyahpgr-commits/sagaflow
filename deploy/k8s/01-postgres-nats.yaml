@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sagaflow-postgres
+  namespace: sagaflow
+spec:
+  selector:
+    app: sagaflow-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sagaflow-postgres
+  namespace: sagaflow
+spec:
+  serviceName: sagaflow-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sagaflow-postgres
+  template:
+    metadata:
+      labels:
+        app: sagaflow-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: sagaflow
+            - name: POSTGRES_USER
+              value: sagaflow
+            - name: POSTGRES_PASSWORD
+              value: sagaflow-change-me
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: pgdata
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sagaflow-nats
+  namespace: sagaflow
+spec:
+  selector:
+    app: sagaflow-nats
+  ports:
+    - name: client
+      port: 4222
+      targetPort: 4222
+    - name: monitor
+      port: 8222
+      targetPort: 8222
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sagaflow-nats
+  namespace: sagaflow
+spec:
+  serviceName: sagaflow-nats
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sagaflow-nats
+  template:
+    metadata:
+      labels:
+        app: sagaflow-nats
+    spec:
+      containers:
+        - name: nats
+          image: nats:2.10-alpine
+          args: ["-js", "-sd", "/data", "-m", "8222"]
+          ports:
+            - containerPort: 4222
+            - containerPort: 8222
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: nats-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: nats-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi

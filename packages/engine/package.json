@@ -1,0 +1,28 @@
+{
+  "name": "@sagaflow/engine",
+  "version": "8.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.14.0",
+    "@sagaflow/shared": "*",
+    "nats": "^2.29.0",
+    "pg": "^8.13.1",
+    "quickjs-emscripten": "^0.31.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/pg": "^8.11.10"
+  }
+}

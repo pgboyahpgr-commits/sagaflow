@@ -1,0 +1,34 @@
+{
+  "name": "sagaflow",
+  "version": "8.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "description": "Zero-budget, self-hostable, multi-tenant distributed Workflow & Saga Orchestration Engine with pluggable storage",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "bin": {
+    "sagaflow": "./apps/api/dist/cli.js"
+  },
+  "scripts": {
+    "build": "npm run build -w @sagaflow/shared && npm run build -w @sagaflow/engine && npm run build -w @sagaflow/sdk && npm run build -w @sagaflow/api && npm run build -w @sagaflow/web",
+    "build:backend": "npm run build -w @sagaflow/shared && npm run build -w @sagaflow/engine && npm run build -w @sagaflow/sdk && npm run build -w @sagaflow/api",
+    "dev:api": "npm run dev -w @sagaflow/api",
+    "dev:web": "npm run dev -w @sagaflow/web",
+    "dev": "node scripts/dev.mjs",
+    "start": "node apps/api/dist/server.js",
+    "cli": "node apps/api/dist/cli.js",
+    "benchmark": "node apps/api/dist/cli.js benchmark --runs 1000 --concurrency 50",
+    "test": "vitest run",
+    "typecheck": "npm run typecheck -w @sagaflow/shared && npm run typecheck -w @sagaflow/engine && npm run typecheck -w @sagaflow/sdk && npm run typecheck -w @sagaflow/api && npm run typecheck -w @sagaflow/web"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
+  }
+}

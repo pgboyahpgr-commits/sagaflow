@@ -1,0 +1,15 @@
+# Never upload local runtime data, secrets, or build output to Vercel
+data
+.env
+.env.*
+!.env.example
+node_modules
+**/node_modules
+**/dist
+coverage
+tests
+docs/*.pdf
+.git
+.github
+*.log
+.master.key
