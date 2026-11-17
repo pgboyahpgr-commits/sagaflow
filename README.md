@@ -2,7 +2,7 @@
 
 **A self-hostable, multi-tenant distributed Workflow & Saga Orchestration Engine — with a visual DAG studio, real compensating transactions, and zero required infrastructure.**
 
-[![CI](https://github.com/pgboyahpgr-commits/sagaflow/actions/workflows/ci.yml/badge.svg)](https://github.com/pgboyahpgr-commits/sagaflow/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/live%20demo-sagaflow.vercel.app-22e55c?logo=vercel&logoColor=white)](https://sagaflow.vercel.app)
 [![Version](https://img.shields.io/badge/version-8.0.0-22e55c)](https://github.com/pgboyahpgr-commits/sagaflow)
 [![Node](https://img.shields.io/badge/node-%3E%3D20.12-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-a855f7)](LICENSE)
@@ -262,8 +262,13 @@ The suite exercises the real stack over HTTP: multi-tenant isolation, saga rollb
 idempotency, cancel, DLQ replay, nested sub-workflows, approvals, secrets, webhooks, cron, JWT auth, SSE resume,
 OpenAPI, and the SDK.
 
-`.github/workflows/ci.yml` runs typecheck → build → all 43 tests → CLI benchmark on every push, then builds the
-production Docker image.
+A GitHub Actions pipeline that runs typecheck → build → all 43 tests → CLI benchmark on every push, then builds
+the production Docker image, ships as `.github/workflows/ci.yml` and can be enabled by pushing it with a token
+that carries the `workflow` scope:
+
+```bash
+gh auth refresh -h github.com -s workflow && git add .github/workflows/ci.yml && git commit -m "ci: add workflow" && git push
+```
 
 ---
 
