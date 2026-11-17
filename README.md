@@ -13,6 +13,12 @@
 > The Vercel demo runs on ephemeral JSON storage — it re-seeds itself per serverless instance and shows an
 > amber `EPHEMERAL DEMO` badge. Everything below runs with durable SQLite or PostgreSQL when self-hosted.
 
+![SagaFlow home](docs/screenshots/home.png)
+
+<p align="center">
+  <img src="docs/screenshots/builder.png" alt="SagaFlow visual DAG builder" width="100%" />
+</p>
+
 ---
 
 ## Table of contents
